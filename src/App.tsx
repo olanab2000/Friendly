@@ -5,6 +5,7 @@ import LoginPage from './pages/LoginPage'
 import CalendarPage from './pages/CalendarPage'
 import FriendsPage from './pages/FriendsPage'
 import GroupsPage from './pages/GroupsPage'
+import DemoApp from './demo/DemoApp'
 
 function AppRoutes() {
   const { session, loading } = useAuth()
@@ -17,17 +18,14 @@ function AppRoutes() {
     )
   }
 
-  if (!session) return <LoginPage />
-
   return (
-    <Layout>
-      <Routes>
-        <Route path="/" element={<CalendarPage />} />
-        <Route path="/friends" element={<FriendsPage />} />
-        <Route path="/groups" element={<GroupsPage />} />
-        <Route path="*" element={<Navigate to="/" replace />} />
-      </Routes>
-    </Layout>
+    <Routes>
+      <Route path="/demo" element={<DemoApp />} />
+      <Route path="/" element={session ? <Layout><CalendarPage /></Layout> : <LoginPage />} />
+      <Route path="/friends" element={session ? <Layout><FriendsPage /></Layout> : <Navigate to="/" replace />} />
+      <Route path="/groups" element={session ? <Layout><GroupsPage /></Layout> : <Navigate to="/" replace />} />
+      <Route path="*" element={<Navigate to="/" replace />} />
+    </Routes>
   )
 }
 
