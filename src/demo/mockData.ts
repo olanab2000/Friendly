@@ -1,4 +1,4 @@
-import { addDays, startOfWeek, setHours, setMinutes } from 'date-fns'
+import { addDays, startOfWeek, setHours, setMinutes, startOfDay, endOfDay } from 'date-fns'
 
 const now = new Date()
 const weekStart = startOfWeek(now, { weekStartsOn: 1 })
@@ -20,15 +20,62 @@ export const MOCK_EVENTS = [
 ]
 
 export const MOCK_FRIENDS = [
-  { id: 'f1', full_name: 'Emma Larsson', username: 'emlarsson', initials: 'EL', color: '#8b5cf6' },
-  { id: 'f2', full_name: 'Alex Svensson', username: 'alexsv', initials: 'AS', color: '#3b82f6' },
-  { id: 'f3', full_name: 'Sara Nilsson', username: 'saranilsson', initials: 'SN', color: '#ec4899' },
-  { id: 'f4', full_name: 'Johan Berg', username: 'johanberg', initials: 'JB', color: '#22c55e' },
+  { id: 'f1', full_name: 'Emma Larsson', username: 'emlarsson', color: '#8b5cf6' },
+  { id: 'f2', full_name: 'Alex Svensson', username: 'alexsv', color: '#3b82f6' },
+  { id: 'f3', full_name: 'Sara Nilsson', username: 'saranilsson', color: '#ec4899' },
+  { id: 'f4', full_name: 'Johan Berg', username: 'johanberg', color: '#22c55e' },
 ]
 
-export const MOCK_SUGGESTIONS = [
-  { start: addDays(now, 2), end: addDays(now, 2), hour: '10:00 – 12:00', available: 3, total: 4 },
-  { start: addDays(now, 3), end: addDays(now, 3), hour: '14:00 – 16:00', available: 4, total: 4 },
-  { start: addDays(now, 5), end: addDays(now, 5), hour: '18:00 – 20:00', available: 3, total: 4 },
-  { start: addDays(now, 8), end: addDays(now, 8), hour: '12:00 – 14:00', available: 2, total: 4 },
-]
+// Seeded busy slots per friend for next 14 days (true = busy that day)
+// Only we know they're busy — we never see WHY
+const FRIEND_BUSY: Record<string, number[]> = {
+  f1: [0, 2, 5, 9, 12],       // Emma busy on these day offsets from today
+  f2: [1, 3, 6, 7, 11],       // Alex
+  f3: [0, 4, 5, 8, 13],       // Sara
+  f4: [2, 3, 6, 10, 12],      // Johan
+}
+
+export interface DayAvailability {
+  date: Date
+  myBusy: boolean          // I have busy events that day
+  members: {
+    id: string
+    name: string
+    color: string
+    free: boolean
+  }[]
+  freeCount: number        // how many members (incl. me) are free
+  total: number            // total group members incl. me
+}
+
+export function buildGroupAvailability(days = 14): DayAvailability[] {
+  const today = startOfDay(now)
+  const result: DayAvailability[] = []
+
+  for (let i = 0; i < days; i++) {
+    const date = addDays(today, i)
+    const dayStart = startOfDay(date)
+    const dayEnd = endOfDay(date)
+
+    // Am I busy? Check MOCK_EVENTS
+    const myBusy = MOCK_EVENTS.some(e => {
+      if (!e.is_busy) return false
+      const s = new Date(e.start_time)
+      const en = new Date(e.end_time)
+      return s < dayEnd && en > dayStart
+    })
+
+    const members = MOCK_FRIENDS.map(f => ({
+      id: f.id,
+      name: f.full_name,
+      color: f.color,
+      free: !FRIEND_BUSY[f.id].includes(i),
+    }))
+
+    const freeCount = (myBusy ? 0 : 1) + members.filter(m => m.free).length
+
+    result.push({ date, myBusy, members, freeCount, total: members.length + 1 })
+  }
+
+  return result
+}
