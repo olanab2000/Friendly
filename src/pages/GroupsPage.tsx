@@ -2,8 +2,8 @@ import { useEffect, useState } from 'react'
 import { Users, Plus, X, ChevronRight, Sparkles } from 'lucide-react'
 import { supabase } from '../lib/supabase'
 import { useAuth } from '../contexts/AuthContext'
-import { Group, Friendship, Profile, TimeSlot } from '../types'
-import { format, addDays, startOfDay, parseISO, isWithinInterval } from 'date-fns'
+import type { Group, Profile, TimeSlot } from '../types'
+import { format, addDays, startOfDay, parseISO } from 'date-fns'
 
 export default function GroupsPage() {
   const { user } = useAuth()

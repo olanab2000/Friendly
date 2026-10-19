@@ -2,7 +2,7 @@ import { useEffect, useState } from 'react'
 import { UserPlus, Check, X, Clock, Search, User } from 'lucide-react'
 import { supabase } from '../lib/supabase'
 import { useAuth } from '../contexts/AuthContext'
-import { Friendship, Profile } from '../types'
+import type { Friendship, Profile } from '../types'
 
 export default function FriendsPage() {
   const { user } = useAuth()

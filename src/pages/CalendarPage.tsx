@@ -3,11 +3,11 @@ import FullCalendar from '@fullcalendar/react'
 import dayGridPlugin from '@fullcalendar/daygrid'
 import timeGridPlugin from '@fullcalendar/timegrid'
 import interactionPlugin from '@fullcalendar/interaction'
-import { DateSelectArg, EventClickArg, EventInput } from '@fullcalendar/core'
+import type { DateSelectArg, EventClickArg, EventInput } from '@fullcalendar/core'
 import { Plus, X, Clock, AlignLeft } from 'lucide-react'
 import { supabase } from '../lib/supabase'
 import { useAuth } from '../contexts/AuthContext'
-import { CalendarEvent } from '../types'
+import type { CalendarEvent } from '../types'
 
 const EVENT_COLORS = [
   { label: 'Purple', value: '#8b5cf6' },
