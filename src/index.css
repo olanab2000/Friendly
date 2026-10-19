@@ -1,0 +1,24 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+/* FullCalendar overrides */
+.fc {
+  font-family: inherit;
+}
+.fc .fc-button-primary {
+  @apply bg-brand-600 border-brand-600;
+}
+.fc .fc-button-primary:hover {
+  @apply bg-brand-700 border-brand-700;
+}
+.fc .fc-button-primary:not(:disabled).fc-button-active,
+.fc .fc-button-primary:not(:disabled):active {
+  @apply bg-brand-700 border-brand-700;
+}
+.fc .fc-daygrid-day.fc-day-today {
+  @apply bg-brand-50;
+}
+.fc-event {
+  @apply cursor-pointer;
+}
